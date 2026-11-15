@@ -1,0 +1,26 @@
+#!/bin/sh
+# postinstall - MVME393 Xcfb Post-Installation Script
+# Configures device nodes, socket directories, and symlinks
+
+echo "Configuring MVME393 X Server environment..."
+
+# 1. Ensure /dev/memregion/12 exists (MVME393 VME A24 window)
+if [ ! -c /dev/memregion/12 ]; then
+    echo "Creating /dev/memregion/12 character device (c 19 140)..."
+    [ -d /dev/memregion ] || mkdir -p /dev/memregion
+    mknod /dev/memregion/12 c 19 140
+    chmod 666 /dev/memregion/12
+fi
+
+# 2. Ensure /tmp/.X11-unix exists with sticky bit
+[ -d /tmp/.X11-unix ] || mkdir -p /tmp/.X11-unix
+chmod 1777 /tmp/.X11-unix
+
+# 3. Create default X server symlink if not present
+if [ ! -f /usr/bin/X11/X ] && [ ! -h /usr/bin/X11/X ]; then
+    echo "Linking /usr/bin/X11/X -> /usr/bin/X11/Xcfb..."
+    ln -s /usr/bin/X11/Xcfb /usr/bin/X11/X
+fi
+
+echo "MVME393 X Server post-install complete."
+exit 0

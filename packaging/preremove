@@ -1,0 +1,12 @@
+#!/bin/sh
+# preremove - MVME393 Xcfb Pre-Removal Script
+
+echo "Stopping any running Xcfb processes..."
+killall Xcfb 2>/dev/null || true
+
+# Remove symlink if it points to Xcfb
+if [ -h /usr/bin/X11/X ]; then
+    rm -f /usr/bin/X11/X
+fi
+
+exit 0

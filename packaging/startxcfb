@@ -1,0 +1,44 @@
+#!/bin/sh
+# startxcfb - Launcher for MVME393 X Server on Motorola System V/88
+
+if [ ! -c /dev/memregion/12 ]; then
+    echo "Creating /dev/memregion/12 for MVME393 color framebuffer..."
+    mknod /dev/memregion/12 c 19 140
+    chmod 666 /dev/memregion/12
+fi
+
+[ -d /tmp/.X11-unix ] || mkdir -p /tmp/.X11-unix
+chmod 1777 /tmp/.X11-unix
+rm -f /tmp/.X11-unix/X0
+
+echo "Starting MVME393 Xcfb server on display :0..."
+/usr/bin/X11/Xcfb :0 > /tmp/xserver.log 2>&1 &
+X_PID=$!
+sleep 3
+
+if ! kill -0 $X_PID 2>/dev/null; then
+    echo "ERROR: Xcfb failed to start. Log output:"
+    cat /tmp/xserver.log
+    exit 1
+fi
+
+export DISPLAY=:0.0
+
+if [ -f $HOME/.xinitrc ]; then
+    sh $HOME/.xinitrc
+else
+    if [ -x /usr/bin/X11/mwm ]; then
+        echo "Starting Motif Window Manager (mwm)..."
+        /usr/bin/X11/mwm &
+    fi
+    if [ -x /usr/bin/X11/xclock ]; then
+        echo "Starting xclock..."
+        /usr/bin/X11/xclock -geometry 160x160+20+20 &
+    fi
+    if [ -x /usr/bin/X11/xterm ]; then
+        echo "Starting xterm..."
+        /usr/bin/X11/xterm -geometry 80x24+220+20
+    else
+        wait $X_PID
+    fi
+fi

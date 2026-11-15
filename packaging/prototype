@@ -1,0 +1,13 @@
+!PROJDIR=/tmp/pkgroot
+i pkginfo=pkginfo
+i postinstall=postinstall
+i preremove=preremove
+d none /usr 0755 root other
+d none /usr/bin 0755 root other
+d none /usr/bin/X11 0755 root other
+f none /usr/bin/X11/Xcfb 0755 root other
+f none /usr/bin/X11/startxcfb 0755 root other
+d none /usr/lib 0755 root other
+d none /usr/lib/X11 0755 root other
+f none /usr/lib/X11/rgb.dir 0644 root other
+f none /usr/lib/X11/rgb.pag 0644 root other
