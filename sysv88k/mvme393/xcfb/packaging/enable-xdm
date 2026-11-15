@@ -1,0 +1,77 @@
+#!/bin/sh
+# enable-xdm - Enable XDM graphical login on Motorola System V/88 with MVME393 Xcfb
+
+set -e
+
+echo "=========================================================="
+echo "  Enabling XDM Graphical Login for MVME393 X Server"
+echo "=========================================================="
+
+# 1. Ensure Xcfb symlink is active
+if [ ! -f /usr/bin/X11/X ] && [ ! -h /usr/bin/X11/X ]; then
+    echo "Creating /usr/bin/X11/X -> /usr/bin/X11/Xcfb symlink..."
+    ln -s /usr/bin/X11/Xcfb /usr/bin/X11/X
+fi
+
+# 2. Ensure /dev/memregion/12 exists
+if [ ! -c /dev/memregion/12 ]; then
+    echo "Creating /dev/memregion/12..."
+    [ -d /dev/memregion ] || mkdir -p /dev/memregion
+    mknod /dev/memregion/12 c 19 140
+    chmod 666 /dev/memregion/12
+fi
+
+# 3. Ensure /tmp/.X11-unix exists with sticky bit
+[ -d /tmp/.X11-unix ] || mkdir -p /tmp/.X11-unix
+chmod 1777 /tmp/.X11-unix
+
+# 4. Configure /usr/lib/X11/xdm/Xservers
+XSERVERS=/usr/lib/X11/xdm/Xservers
+if [ -f "$XSERVERS" ]; then
+    if /bin/grep -E "^[ 	]*:0[ 	]+local" "$XSERVERS" >/dev/null 2>&1; then
+        echo "Local display :0 already configured in $XSERVERS."
+    else
+        echo "Adding local display :0 to $XSERVERS..."
+        cp "$XSERVERS" "${XSERVERS}.bak"
+        echo ":0 local /usr/bin/X11/X :0" >> "$XSERVERS"
+    fi
+else
+    echo "ERROR: $XSERVERS not found. Please ensure X11 clients package is installed."
+    exit 1
+fi
+
+# 5. Enable root graphical login in /etc/default/login if requested/needed
+if [ -f /etc/default/login ]; then
+    if /bin/grep "^CONSOLE=" /etc/default/login >/dev/null 2>&1; then
+        echo "Permitting root graphical login in /etc/default/login..."
+        cp /etc/default/login /etc/default/login.bak
+        sed -e 's/^CONSOLE=/#CONSOLE=/' /etc/default/login.bak > /etc/default/login
+    fi
+fi
+
+# 6. Enable boot-time startup via rc3.d and rc2.d
+if [ -f /etc/init.d/xdm ]; then
+    [ -d /etc/rc3.d ] || mkdir -p /etc/rc3.d
+    [ -d /etc/rc2.d ] || mkdir -p /etc/rc2.d
+    [ -h /etc/rc3.d/S25xdm ] || [ -f /etc/rc3.d/S25xdm ] || ln -s /etc/init.d/xdm /etc/rc3.d/S25xdm
+    [ -h /etc/rc2.d/K15xdm ] || [ -f /etc/rc2.d/K15xdm ] || ln -s /etc/init.d/xdm /etc/rc2.d/K15xdm
+    echo "Linked /etc/init.d/xdm into /etc/rc3.d/S25xdm and /etc/rc2.d/K15xdm."
+fi
+
+# 7. Restart XDM if running or start it now
+if [ -f /usr/lib/X11/xdm/xdm-pid ]; then
+    echo "Restarting active XDM daemon..."
+    /etc/init.d/xdm stop 2>/dev/null || true
+    sleep 2
+    /etc/init.d/xdm start
+elif [ -x /usr/bin/X11/xdm ]; then
+    echo "Starting XDM daemon..."
+    /etc/init.d/xdm start 2>/dev/null || /usr/bin/X11/xdm -config /usr/lib/X11/xdm/xdm-config &
+fi
+
+echo "=========================================================="
+echo "  XDM graphical login is now enabled!"
+echo "  The graphical login screen should now appear on display :0."
+echo "  To disable at any time, run: /usr/bin/X11/disable-xdm"
+echo "=========================================================="
+exit 0

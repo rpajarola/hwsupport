@@ -54,6 +54,11 @@ If installing from the compressed tarball `packages/xcfb-1.0.0-m88k.tar.Z`:
 # sh install.sh
 ```
 
+To install and immediately enable XDM graphical login in a single command:
+```sh
+# sh install.sh --enable-xdm
+```
+
 ---
 
 ## 3. Starting the X Server
@@ -81,7 +86,24 @@ To run the server manually in the background:
 
 ---
 
-## 4. Transferring to Real Hardware
+## 4. XDM Graphical Login Integration
+
+To configure the Motorola SVR4 system to start the X Display Manager on display `:0` and present a graphical login prompt automatically on boot:
+
+```sh
+# /usr/bin/X11/enable-xdm
+```
+
+To revert back to console login and disable XDM:
+```sh
+# /usr/bin/X11/disable-xdm
+```
+
+For full details on XDM configuration, MIT magic cookie authorization, and `/etc/default/login` settings, see [docs/xdm_setup.md](xdm_setup.md).
+
+---
+
+## 5. Transferring to Real Hardware
 
 ### Via SCSI Tape
 ```sh

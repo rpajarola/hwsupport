@@ -1,0 +1,58 @@
+#!/bin/sh
+# disable-xdm - Disable XDM graphical login on Motorola System V/88
+set -e
+
+echo "=========================================================="
+echo "  Disabling XDM Graphical Login"
+echo "=========================================================="
+
+# 1. Stop running XDM daemon
+if [ -f /usr/lib/X11/xdm/xdm-pid ] || /bin/ps -ef | /bin/grep '[x]dm' >/dev/null 2>&1; then
+    echo "Stopping XDM..."
+    if [ -f /etc/init.d/xdm ]; then
+        /etc/init.d/xdm stop 2>/dev/null || true
+    fi
+    killall xdm 2>/dev/null || true
+    sleep 1
+fi
+
+# 2. Restore /usr/lib/X11/xdm/Xservers
+XSERVERS=/usr/lib/X11/xdm/Xservers
+if [ -f "$XSERVERS" ]; then
+    if [ -f "${XSERVERS}.bak" ]; then
+        echo "Restoring original $XSERVERS from backup..."
+        cp "${XSERVERS}.bak" "$XSERVERS"
+    else
+        echo "Removing local display :0 from $XSERVERS..."
+        sed -e '/^[ 	]*:0[ 	][ 	]*local/d' "$XSERVERS" > "${XSERVERS}.tmp" && mv "${XSERVERS}.tmp" "$XSERVERS"
+    fi
+fi
+
+# 3. Restore /etc/default/login if backup exists
+if [ -f /etc/default/login.bak ]; then
+    echo "Restoring /etc/default/login..."
+    cp /etc/default/login.bak /etc/default/login
+elif [ -f /etc/default/login ]; then
+    if /bin/grep "^#CONSOLE=" /etc/default/login >/dev/null 2>&1; then
+        echo "Restoring CONSOLE=/dev/console in /etc/default/login..."
+        sed -e 's/^#CONSOLE=/CONSOLE=/' /etc/default/login > /etc/default/login.tmp && mv /etc/default/login.tmp /etc/default/login
+    fi
+fi
+
+# 4. Remove boot-time startup links
+if [ -h /etc/rc3.d/S25xdm ] || [ -f /etc/rc3.d/S25xdm ]; then
+    echo "Removing /etc/rc3.d/S25xdm..."
+    rm -f /etc/rc3.d/S25xdm
+fi
+
+if [ -h /etc/rc2.d/K15xdm ] || [ -f /etc/rc2.d/K15xdm ]; then
+    echo "Removing /etc/rc2.d/K15xdm..."
+    rm -f /etc/rc2.d/K15xdm
+fi
+
+echo "=========================================================="
+echo "  XDM graphical login is now disabled."
+echo "  You can start X manually with: /usr/bin/X11/startxcfb"
+echo "  Or re-enable XDM anytime with: /usr/bin/X11/enable-xdm"
+echo "=========================================================="
+exit 0

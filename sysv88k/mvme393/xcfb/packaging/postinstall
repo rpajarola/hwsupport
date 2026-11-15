@@ -22,5 +22,10 @@ if [ ! -f /usr/bin/X11/X ] && [ ! -h /usr/bin/X11/X ]; then
     ln -s /usr/bin/X11/Xcfb /usr/bin/X11/X
 fi
 
-echo "MVME393 X Server post-install complete."
+echo "=========================================================="
+echo "MVME393 X Server (Xcfb) installed successfully."
+echo "  - Start manually: /usr/bin/X11/startxcfb"
+echo "  - Enable XDM:     /usr/bin/X11/enable-xdm"
+echo "  - Disable XDM:    /usr/bin/X11/disable-xdm"
+echo "=========================================================="
 exit 0
