@@ -68,7 +68,8 @@ extern int  defaultScreenSaverBlanking;
 extern int  defaultScreenSaverAllowExposures;
 static ClientPtr onlyClient;
 static Bool grabbingClient = FALSE;
-static long *checkForInput[2];
+static long defaultCheckForInput[2] = {0, 0};
+long *checkForInput[2] = { &defaultCheckForInput[0], &defaultCheckForInput[1] };
 extern int connBlockScreenStart;
 
 extern int (* InitialVector[3]) ();

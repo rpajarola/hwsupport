@@ -52,7 +52,7 @@ static miPointerCursorFuncRec xcfbPointerCursorFuncs = {
 
 void xcfbBlockHandler(int index, pointer blockData, pointer pTimeout, pointer pReadmask)
 {
-	static struct timeval poll_tv = { 0, 20000 };
+	static struct timeval poll_tv = { 0, 10000 };
 	static struct timeval zero_tv = { 0, 0 };
 	struct timeval **tvp = (struct timeval **)pTimeout;
 
@@ -63,7 +63,7 @@ void xcfbBlockHandler(int index, pointer blockData, pointer pTimeout, pointer pR
 		*tvp = &zero_tv;
 		xcfbInputReady++;
 	} else {
-		if (*tvp == NULL || (*tvp)->tv_sec > 0 || (*tvp)->tv_usec > 20000) {
+		if (*tvp == NULL || (*tvp)->tv_sec > 0 || (*tvp)->tv_usec > 10000) {
 			*tvp = &poll_tv;
 		}
 	}

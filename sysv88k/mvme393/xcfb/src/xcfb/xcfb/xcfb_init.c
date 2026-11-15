@@ -16,8 +16,8 @@ static PixmapFormatRec formats[] = {
 	{ 8, 8, BITMAP_SCANLINE_PAD },   /* 8-bit deep */
 };
 
-int xcfbInputReady = 0;
-static int zero = 0;
+long xcfbInputReady = 0;
+static long zero = 0;
 
 void InitOutput(ScreenInfo *screenInfo, int argc, char **argv)
 {

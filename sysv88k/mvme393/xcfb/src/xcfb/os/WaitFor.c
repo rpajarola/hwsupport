@@ -50,6 +50,7 @@ extern long EnabledDevices[];
 extern long ClientsWithInput[];
 extern long ClientsWriteBlocked[];
 extern long OutputPending[];
+extern long *checkForInput[2];
 
 extern long ScreenSaverTime;               /* milliseconds */
 extern long ScreenSaverInterval;               /* milliseconds */
@@ -137,6 +138,8 @@ WaitForSomething(pClientsReady)
 	    COPYBITS(ClientsWithInput, clientsReadable);
 	    break;
 	}
+	if (*checkForInput[0] != *checkForInput[1])
+	    break;
 	if (ScreenSaverTime)
 	{
 	    timeout = ScreenSaverTime - TimeSinceLastInputEvent();
@@ -257,6 +260,8 @@ WaitForSomething(pClientsReady)
 	    if (ANYSET (devicesReadable) || ANYSET (clientsReadable))
 		break;
 	}
+	if (*checkForInput[0] != *checkForInput[1])
+	    break;
     }
 
     nready = 0;

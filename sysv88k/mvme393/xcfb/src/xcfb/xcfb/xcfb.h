@@ -53,7 +53,7 @@ extern Bool xcfbCloseScreen(int index, ScreenPtr pScreen);
 extern Bool xcfbSaveScreen(ScreenPtr pScreen, int on);
 extern void xcfbStoreColors(ColormapPtr pmap, int ndef, xColorItem *pdefs);
 
-extern int xcfbInputReady;
+extern long xcfbInputReady;
 extern void xcfbInitInput(void);
 extern Bool xcfbInputPending(void);
 extern void xcfbBlockHandler(int index, pointer blockData, pointer pTimeout, pointer pReadmask);

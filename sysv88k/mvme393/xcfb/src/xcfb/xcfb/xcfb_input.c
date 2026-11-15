@@ -105,9 +105,9 @@ static int xcfbMouseGetMotionEvents(DeviceIntPtr pDev, xTimecoord *buff,
 static KeySym xcfb_map[] = {
 	/* 8-15 */
 	XK_BackSpace, NoSymbol,
-	XK_BackSpace, NoSymbol,
 	XK_Tab, NoSymbol,
 	XK_Linefeed, NoSymbol,
+	XK_Clear, NoSymbol,
 	XK_Clear, NoSymbol,
 	XK_Return, NoSymbol,
 	NoSymbol, NoSymbol,
@@ -323,7 +323,7 @@ void xcfbProcessInputEvents(void)
 	/* 0. Display mouse cursor sprite immediately once root window is ready */
 	if (!cursor_initialized) {
 		cursor_initialized = 1;
-		miPointerDeltaCursor(screenInfo.screens[0], 0, 0, TRUE);
+		miPointerMoveCursor(screenInfo.screens[0], 512, 384, TRUE);
 	}
 
 	/* 1. Framebuffer direct input structure at 0xfe000 */
