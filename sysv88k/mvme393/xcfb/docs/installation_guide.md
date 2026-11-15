@@ -79,7 +79,7 @@ If `$HOME/.xinitrc` exists, `startxcfb` will execute it. Otherwise, it defaults 
 To run the server manually in the background:
 ```sh
 # /usr/bin/X11/Xcfb :0 &
-# export DISPLAY=:0.0
+# DISPLAY=:0.0; export DISPLAY
 # /usr/bin/X11/mwm &
 # /usr/bin/X11/xclock &
 ```

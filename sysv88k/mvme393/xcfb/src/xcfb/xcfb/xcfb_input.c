@@ -23,6 +23,7 @@ static unsigned long lastEventTime = 0;
 
 static unsigned short *mvme393_dpr = NULL;
 static int dpr_fd = -1;
+static int cursor_initialized = 0;
 
 void xcfbInitInput(void)
 {
@@ -47,6 +48,9 @@ Bool xcfbInputPending(void)
 		return FALSE;
 	if (xcfb_mouse_dev == NULL || !xcfb_mouse_dev->on)
 		return FALSE;
+
+	if (!cursor_initialized)
+		return TRUE;
 
 	if (xcfb_in != NULL) {
 		if (xcfb_in->event_pending || xcfb_in->kbd_pending)
@@ -100,7 +104,7 @@ static int xcfbMouseGetMotionEvents(DeviceIntPtr pDev, xTimecoord *buff,
 /* Minimal US ASCII Keymap for KeyCodes 8..127 */
 static KeySym xcfb_map[] = {
 	/* 8-15 */
-	NoSymbol, NoSymbol,
+	XK_BackSpace, NoSymbol,
 	XK_BackSpace, NoSymbol,
 	XK_Tab, NoSymbol,
 	XK_Linefeed, NoSymbol,
@@ -164,32 +168,32 @@ static KeySym xcfb_map[] = {
 	XK_question, NoSymbol,
 	XK_at, NoSymbol,
 	/* 65-90: 'A' - 'Z' */
-	XK_a, XK_A,
-	XK_b, XK_B,
-	XK_c, XK_C,
-	XK_d, XK_D,
-	XK_e, XK_E,
-	XK_f, XK_F,
-	XK_g, XK_G,
-	XK_h, XK_H,
-	XK_i, XK_I,
-	XK_j, XK_J,
-	XK_k, XK_K,
-	XK_l, XK_L,
-	XK_m, XK_M,
-	XK_n, XK_N,
-	XK_o, XK_O,
-	XK_p, XK_P,
-	XK_q, XK_Q,
-	XK_r, XK_R,
-	XK_s, XK_S,
-	XK_t, XK_T,
-	XK_u, XK_U,
-	XK_v, XK_V,
-	XK_w, XK_W,
-	XK_x, XK_X,
-	XK_y, XK_Y,
-	XK_z, XK_Z,
+	XK_A, NoSymbol,
+	XK_B, NoSymbol,
+	XK_C, NoSymbol,
+	XK_D, NoSymbol,
+	XK_E, NoSymbol,
+	XK_F, NoSymbol,
+	XK_G, NoSymbol,
+	XK_H, NoSymbol,
+	XK_I, NoSymbol,
+	XK_J, NoSymbol,
+	XK_K, NoSymbol,
+	XK_L, NoSymbol,
+	XK_M, NoSymbol,
+	XK_N, NoSymbol,
+	XK_O, NoSymbol,
+	XK_P, NoSymbol,
+	XK_Q, NoSymbol,
+	XK_R, NoSymbol,
+	XK_S, NoSymbol,
+	XK_T, NoSymbol,
+	XK_U, NoSymbol,
+	XK_V, NoSymbol,
+	XK_W, NoSymbol,
+	XK_X, NoSymbol,
+	XK_Y, NoSymbol,
+	XK_Z, NoSymbol,
 	/* 91-96 */
 	XK_bracketleft, XK_braceleft,
 	XK_backslash, XK_bar,
@@ -315,6 +319,12 @@ void xcfbProcessInputEvents(void)
 	gettimeofday(&tv, 0);
 	now = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 	lastEventTime = now;
+
+	/* 0. Display mouse cursor sprite immediately once root window is ready */
+	if (!cursor_initialized) {
+		cursor_initialized = 1;
+		miPointerDeltaCursor(screenInfo.screens[0], 0, 0, TRUE);
+	}
 
 	/* 1. Framebuffer direct input structure at 0xfe000 */
 	if (xcfb_in != NULL && (xcfb_in->event_pending || xcfb_in->kbd_pending)) {

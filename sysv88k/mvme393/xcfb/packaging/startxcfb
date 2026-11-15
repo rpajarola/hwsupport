@@ -22,7 +22,7 @@ if ! kill -0 $X_PID 2>/dev/null; then
     exit 1
 fi
 
-export DISPLAY=:0.0
+DISPLAY=:0.0; export DISPLAY
 
 if [ -f $HOME/.xinitrc ]; then
     sh $HOME/.xinitrc
@@ -37,8 +37,7 @@ else
     fi
     if [ -x /usr/bin/X11/xterm ]; then
         echo "Starting xterm..."
-        /usr/bin/X11/xterm -geometry 80x24+220+20
-    else
-        wait $X_PID
+        /usr/bin/X11/xterm -geometry 80x24+220+20 &
     fi
+    wait $X_PID
 fi
