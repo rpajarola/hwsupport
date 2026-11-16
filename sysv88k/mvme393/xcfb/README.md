@@ -28,6 +28,10 @@ Hardware support, driver source, distribution packages, and documentation for th
 
 ```
 hwsupport/sysv88k/mvme393/xcfb/
+├── VERSION                    # Canonical SemVer version string
+├── scripts/                   # Versioning & packaging automation
+│   ├── bump_version.py        # Automated version synchronizer
+│   └── package.py             # Package builder, validator & checksum generator
 ├── packages/                  # Ready-to-install binary distribution archives
 │   ├── xcfb-1.0.0-m88k.pkg    # Official SVR4 datastream package (pkgadd)
 │   ├── xcfb-1.0.0-m88k.tar.Z  # Standalone compressed tarball (install.sh)
@@ -41,6 +45,12 @@ hwsupport/sysv88k/mvme393/xcfb/
 │   ├── enable-xdm             # Script to enable XDM graphical login
 │   ├── disable-xdm            # Script to disable XDM graphical login
 │   └── install.sh             # Standalone shell installer
+├── docs/                      # Technical documentation & guides
+│   ├── packaging.md           # Package format, versioning, and build pipeline
+│   ├── installation_guide.md  # Step-by-step installation instructions
+│   ├── xdm_setup.md           # XDM graphical login configuration guide
+│   ├── deltawindows_protocol.md # Dual-Port RAM hardware protocol
+│   └── mvme393_hardware.md    # Hardware register & memory map reference
 ├── src/
 │   ├── xcfb/                  # Complete X11R4 Xcfb source tree for m88k SVR4
 │   │   ├── Makefile           # Standalone build Makefile

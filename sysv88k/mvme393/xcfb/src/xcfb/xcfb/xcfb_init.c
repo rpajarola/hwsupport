@@ -8,6 +8,7 @@
 #include <sys/time.h>
 
 #include "xcfb.h"
+#include "xcfb_version.h"
 #include "opaque.h"
 
 #define NUMFORMATS 2
@@ -72,10 +73,15 @@ void ddxGiveUp(void)
 
 int ddxProcessArgument(int argc, char *argv[], int i)
 {
+	if (strcmp(argv[i], "-version") == 0) {
+		ErrorF("Xcfb version %s for Motorola System V/88 (m88k)\n", XCFB_VERSION_STRING);
+		exit(0);
+	}
 	return 0;
 }
 
 void ddxUseMsg(void)
 {
-	ErrorF("Xcfb - Motorola MVME393 Color Framebuffer Server\n");
+	ErrorF("Xcfb %s - Motorola MVME393 Color Framebuffer Server\n", XCFB_VERSION_STRING);
+	ErrorF("-version               print server version and exit\n");
 }
