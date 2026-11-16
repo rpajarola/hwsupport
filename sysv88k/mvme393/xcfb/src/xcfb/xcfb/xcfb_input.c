@@ -101,7 +101,7 @@ static int xcfbMouseGetMotionEvents(DeviceIntPtr pDev, xTimecoord *buff,
 	return 0;
 }
 
-/* Minimal US ASCII Keymap for KeyCodes 8..127 */
+/* US ASCII Keymap for KeyCodes 8..140 */
 static KeySym xcfb_map[] = {
 	/* 8-15 */
 	XK_BackSpace, NoSymbol,
@@ -110,28 +110,28 @@ static KeySym xcfb_map[] = {
 	XK_Clear, NoSymbol,
 	XK_Clear, NoSymbol,
 	XK_Return, NoSymbol,
-	NoSymbol, NoSymbol,
-	NoSymbol, NoSymbol,
-	/* 16-23 */
+	XK_Next, NoSymbol,
+	XK_Insert, NoSymbol,
+	/* 16-23: Modifiers */
 	XK_Shift_L, NoSymbol,
 	XK_Control_L, NoSymbol,
-	XK_Menu, NoSymbol,
-	XK_Pause, NoSymbol,
+	XK_Alt_L, NoSymbol,
+	XK_Alt_R, NoSymbol,
 	XK_Caps_Lock, NoSymbol,
+	XK_Shift_R, NoSymbol,
+	XK_Control_R, NoSymbol,
+	XK_Meta_L, NoSymbol,
+	/* 24-31: Navigation */
+	XK_Left, NoSymbol,
+	XK_Up, NoSymbol,
+	XK_Right, NoSymbol,
 	XK_Escape, NoSymbol,
-	NoSymbol, NoSymbol,
-	NoSymbol, NoSymbol,
-	/* 24-31 */
-	NoSymbol, NoSymbol,
-	NoSymbol, NoSymbol,
-	NoSymbol, NoSymbol,
-	XK_Escape, NoSymbol,
-	NoSymbol, NoSymbol,
-	NoSymbol, NoSymbol,
-	NoSymbol, NoSymbol,
-	NoSymbol, NoSymbol,
+	XK_Down, NoSymbol,
+	XK_Home, NoSymbol,
+	XK_End, NoSymbol,
+	XK_Prior, NoSymbol,
 	/* 32-39 */
-	XK_space, NoSymbol,
+	XK_space, XK_space,
 	XK_exclam, NoSymbol,
 	XK_quotedbl, NoSymbol,
 	XK_numbersign, NoSymbol,
@@ -168,32 +168,32 @@ static KeySym xcfb_map[] = {
 	XK_question, NoSymbol,
 	XK_at, NoSymbol,
 	/* 65-90: 'A' - 'Z' */
-	XK_A, NoSymbol,
-	XK_B, NoSymbol,
-	XK_C, NoSymbol,
-	XK_D, NoSymbol,
-	XK_E, NoSymbol,
-	XK_F, NoSymbol,
-	XK_G, NoSymbol,
-	XK_H, NoSymbol,
-	XK_I, NoSymbol,
-	XK_J, NoSymbol,
-	XK_K, NoSymbol,
-	XK_L, NoSymbol,
-	XK_M, NoSymbol,
-	XK_N, NoSymbol,
-	XK_O, NoSymbol,
-	XK_P, NoSymbol,
-	XK_Q, NoSymbol,
-	XK_R, NoSymbol,
-	XK_S, NoSymbol,
-	XK_T, NoSymbol,
-	XK_U, NoSymbol,
-	XK_V, NoSymbol,
-	XK_W, NoSymbol,
-	XK_X, NoSymbol,
-	XK_Y, NoSymbol,
-	XK_Z, NoSymbol,
+	XK_a, XK_A,
+	XK_b, XK_B,
+	XK_c, XK_C,
+	XK_d, XK_D,
+	XK_e, XK_E,
+	XK_f, XK_F,
+	XK_g, XK_G,
+	XK_h, XK_H,
+	XK_i, XK_I,
+	XK_j, XK_J,
+	XK_k, XK_K,
+	XK_l, XK_L,
+	XK_m, XK_M,
+	XK_n, XK_N,
+	XK_o, XK_O,
+	XK_p, XK_P,
+	XK_q, XK_Q,
+	XK_r, XK_R,
+	XK_s, XK_S,
+	XK_t, XK_T,
+	XK_u, XK_U,
+	XK_v, XK_V,
+	XK_w, XK_W,
+	XK_x, XK_X,
+	XK_y, XK_Y,
+	XK_z, XK_Z,
 	/* 91-96 */
 	XK_bracketleft, XK_braceleft,
 	XK_backslash, XK_bar,
@@ -201,7 +201,7 @@ static KeySym xcfb_map[] = {
 	XK_asciicircum, NoSymbol,
 	XK_underscore, NoSymbol,
 	XK_grave, XK_asciitilde,
-	/* 97-122: lowercase aliases */
+	/* 97-122: lowercase 'a' - 'z' */
 	XK_a, XK_A,
 	XK_b, XK_B,
 	XK_c, XK_C,
@@ -233,13 +233,28 @@ static KeySym xcfb_map[] = {
 	XK_bar, NoSymbol,
 	XK_braceright, NoSymbol,
 	XK_asciitilde, NoSymbol,
-	XK_Delete, NoSymbol
+	XK_Delete, NoSymbol,
+	/* 128-139: F1 - F12 */
+	XK_F1, NoSymbol,
+	XK_F2, NoSymbol,
+	XK_F3, NoSymbol,
+	XK_F4, NoSymbol,
+	XK_F5, NoSymbol,
+	XK_F6, NoSymbol,
+	XK_F7, NoSymbol,
+	XK_F8, NoSymbol,
+	XK_F9, NoSymbol,
+	XK_F10, NoSymbol,
+	XK_F11, NoSymbol,
+	XK_F12, NoSymbol,
+	/* 140 */
+	XK_Meta_R, NoSymbol
 };
 
 static KeySymsRec xcfbKeySyms = {
 	xcfb_map,
 	8,
-	127,
+	140,
 	2
 };
 
@@ -250,8 +265,16 @@ int xcfbKeybdProc(DevicePtr pDev, int what)
 	switch (what) {
 	case DEVICE_INIT:
 		xcfb_kbd_dev = pDev;
-		xcfbModMap[16] = ShiftMask;
-		xcfbModMap[17] = ControlMask;
+		memset(xcfbModMap, 0, sizeof(xcfbModMap));
+		xcfbModMap[16] = ShiftMask;    /* Shift_L */
+		xcfbModMap[21] = ShiftMask;    /* Shift_R */
+		xcfbModMap[17] = ControlMask;  /* Control_L */
+		xcfbModMap[22] = ControlMask;  /* Control_R */
+		xcfbModMap[18] = Mod1Mask;     /* Alt_L */
+		xcfbModMap[19] = Mod1Mask;     /* Alt_R */
+		xcfbModMap[20] = LockMask;     /* Caps_Lock */
+		xcfbModMap[23] = Mod4Mask;     /* Meta_L */
+		xcfbModMap[140] = Mod4Mask;    /* Meta_R */
 		InitKeyboardDeviceStruct(
 			pDev,
 			&xcfbKeySyms,
