@@ -6,7 +6,7 @@ if [ -f /usr/lib/X11/xdm/xdm-pid ] || /bin/ps -ef | /bin/grep '[x]dm' >/dev/null
     if [ -x /usr/bin/X11/disable-xdm ]; then
         /usr/bin/X11/disable-xdm
     elif [ -f /etc/init.d/xdm ]; then
-        /etc/init.d/xdm stop 2>/dev/null || true
+        sh /etc/init.d/xdm stop 2>/dev/null || true
     fi
 fi
 

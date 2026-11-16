@@ -61,12 +61,12 @@ fi
 # 7. Restart XDM if running or start it now
 if [ -f /usr/lib/X11/xdm/xdm-pid ]; then
     echo "Restarting active XDM daemon..."
-    /etc/init.d/xdm stop 2>/dev/null || true
+    sh /etc/init.d/xdm stop 2>/dev/null || true
     sleep 2
-    /etc/init.d/xdm start
+    sh /etc/init.d/xdm start
 elif [ -x /usr/bin/X11/xdm ]; then
     echo "Starting XDM daemon..."
-    /etc/init.d/xdm start 2>/dev/null || /usr/bin/X11/xdm -config /usr/lib/X11/xdm/xdm-config &
+    sh /etc/init.d/xdm start 2>/dev/null || /usr/bin/X11/xdm -config /usr/lib/X11/xdm/xdm-config &
 fi
 
 echo "=========================================================="

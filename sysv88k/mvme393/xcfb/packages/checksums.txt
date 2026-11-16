@@ -1,2 +1,2 @@
-8caec770e703554ebc61c1aec541fe17  xcfb-1.0.0-m88k.pkg
-4fa8371ce88c5ea9bae337370369d68bba53a6ab0176cfb07c85e7bec8730bf8  xcfb-1.0.0-m88k.pkg
+456bede721da8cdbf7fb7315ae176a9c46c7ba29c8643bc7c6c28fbca41b4172  xcfb-1.0.0-m88k.pkg
+bb563fc52a340ab8e84afce8b399d2f9dfe631a8959c1b210fb06aec6dbbc008  xcfb-1.0.0-m88k.tar.Z
